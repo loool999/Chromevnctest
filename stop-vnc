@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Stop VNC server
+echo "Stopping VNC server..."
+vncserver -kill :3
+
+echo "VNC server stopped."

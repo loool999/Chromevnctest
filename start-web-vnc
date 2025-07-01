@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Web VNC Server Startup Script
+echo "Starting Web VNC Server..."
+
+# Kill any existing websockify process for our port
+pkill -f "websockify.*6093"
+
+# Start websockify to bridge web requests to VNC server
+# Port 6093 for web access, connecting to VNC server on localhost:5903
+cd /home/scrapybara/noVNC
+/usr/bin/python3 -m websockify --web=. 6093 localhost:5903 &
+
+# Wait a moment for the server to start
+sleep 2
+
+echo ""
+echo "🌐 Web VNC Server Started!"
+echo ""
+echo "Access your VNC desktop at:"
+echo "  http://localhost:6093/vnc.html"
+echo ""
+echo "Connection settings:"
+echo "  Host: localhost"
+echo "  Port: 5903"
+echo "  Password: vnc123"
+echo ""
+echo "Or use the auto-connect URL:"
+echo "  http://localhost:6093/vnc.html?host=localhost&port=6093&password=vnc123&autoconnect=true"
+echo ""
+
+# Check if server started successfully
+if pgrep -f "websockify.*6093" > /dev/null; then
+    echo "✅ Web server is running on port 6093"
+else
+    echo "❌ Failed to start web server"
+fi

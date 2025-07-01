@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Public Web VNC Server Startup Script
+echo "🌍 Starting PUBLIC Web VNC Server..."
+
+# Get public IP
+PUBLIC_IP=$(curl -s ifconfig.me 2>/dev/null || curl -s ipinfo.io/ip 2>/dev/null || echo "unknown")
+
+# Kill any existing websockify process for our port
+pkill -f "websockify.*6093"
+
+# Start websockify to bridge web requests to VNC server
+# Bind to all interfaces (0.0.0.0) for public access
+cd /home/scrapybara/noVNC
+/usr/bin/python3 -m websockify --web=. 0.0.0.0:6093 localhost:5903 &
+
+# Wait a moment for the server to start
+sleep 3
+
+echo ""
+echo "🌐 PUBLIC Web VNC Server Started!"
+echo ""
+echo "🌍 Public Access URLs:"
+echo "  http://$PUBLIC_IP:6093/"
+echo "  http://$PUBLIC_IP:6093/vnc.html"
+echo ""
+echo "🚀 Auto-Connect URL:"
+echo "  http://$PUBLIC_IP:6093/vnc.html?host=$PUBLIC_IP&port=6093&password=vnc123&autoconnect=true&resize=scale"
+echo ""
+echo "🔒 Connection Details:"
+echo "  Host: $PUBLIC_IP"
+echo "  Port: 6093 (Web) / 5903 (VNC)"
+echo "  Password: vnc123"
+echo ""
+
+# Check if server started successfully
+if pgrep -f "websockify.*6093" > /dev/null; then
+    echo "✅ Public web server is running on port 6093"
+    echo "🌍 Your VNC desktop is now accessible from anywhere!"
+else
+    echo "❌ Failed to start public web server"
+fi
+
+echo ""
+echo "📱 Access from any device:"
+echo "  - Desktop browsers (Chrome, Firefox, Safari, Edge)"
+echo "  - Mobile devices (phones, tablets)"
+echo "  - Any device with internet access"

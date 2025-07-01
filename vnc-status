@@ -1,0 +1,46 @@
+#!/bin/bash
+
+echo "=== VNC Server Status ==="
+echo ""
+
+# Check VNC processes
+echo "Running VNC processes:"
+ps aux | grep vnc | grep -v grep | while read line; do
+    echo "  $line"
+done
+echo ""
+
+# Check network ports
+echo "VNC ports listening:"
+netstat -tuln | grep -E "590[0-9]" | while read line; do
+    echo "  $line"
+done
+echo ""
+
+# Display connection info
+echo "Connection Information:"
+echo "  Display :3 - Port 5903"
+echo "  Password: vnc123"
+echo "  Resolution: 1920x1080"
+echo "  Command: vncviewer localhost:5903"
+echo ""
+
+# Check desktop session
+echo "Desktop Session:"
+if pgrep -f "startxfce4" > /dev/null; then
+    echo "  ✓ XFCE desktop is running"
+else
+    echo "  ✗ XFCE desktop not detected"
+fi
+
+if pgrep -f "pulseaudio" > /dev/null; then
+    echo "  ✓ Audio server is running"
+else
+    echo "  ✗ Audio server not detected"
+fi
+
+echo ""
+echo "=== Management Commands ==="
+echo "  Start VNC: ./start-vnc"
+echo "  Stop VNC:  ./stop-vnc"
+echo "  This status: ./vnc-status"

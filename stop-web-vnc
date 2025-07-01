@@ -1,0 +1,20 @@
+#!/bin/bash
+
+echo "Stopping Web VNC Server..."
+
+# Kill websockify process
+pkill -f "websockify.*6093"
+
+# Wait a moment
+sleep 1
+
+# Check if stopped
+if pgrep -f "websockify.*6093" > /dev/null; then
+    echo "❌ Failed to stop web server"
+else
+    echo "✅ Web VNC server stopped"
+fi
+
+echo ""
+echo "VNC desktop server is still running on port 5903"
+echo "Use './stop-vnc' to stop the desktop server"

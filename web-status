@@ -1,0 +1,83 @@
+#!/bin/bash
+
+echo "🌐 VNC Web Deployment Status"
+echo "========================================"
+echo ""
+
+# Check VNC Server
+echo "🖥️  VNC Desktop Server:"
+if pgrep -f "Xtigervnc.*:3" > /dev/null; then
+    echo "   ✅ Running on display :3 (port 5903)"
+else
+    echo "   ❌ Not running"
+fi
+
+# Check XFCE Desktop
+if pgrep -f "startxfce4" > /dev/null; then
+    echo "   ✅ XFCE desktop environment active"
+else
+    echo "   ❌ Desktop environment not running"
+fi
+
+# Check Audio
+if pgrep -f "pulseaudio" > /dev/null; then
+    echo "   ✅ Audio system running"
+else
+    echo "   ❌ Audio system not detected"
+fi
+
+echo ""
+
+# Check Web Interface
+echo "🌐 Web Interface:"
+if pgrep -f "websockify.*6093" > /dev/null; then
+    echo "   ✅ Web server running on port 6093"
+    echo "   🔗 Access at: http://localhost:6093/"
+else
+    echo "   ❌ Web server not running"
+fi
+
+echo ""
+
+# Check Network Ports
+echo "📡 Network Ports:"
+vnc_port=$(netstat -tuln 2>/dev/null | grep ":5903" | wc -l)
+web_port=$(netstat -tuln 2>/dev/null | grep ":6093" | wc -l)
+
+if [ "$vnc_port" -gt 0 ]; then
+    echo "   ✅ VNC port 5903 listening"
+else
+    echo "   ❌ VNC port 5903 not available"
+fi
+
+if [ "$web_port" -gt 0 ]; then
+    echo "   ✅ Web port 6093 listening"
+else
+    echo "   ❌ Web port 6093 not available"
+fi
+
+echo ""
+
+# Overall Status
+if [ "$vnc_port" -gt 0 ] && [ "$web_port" -gt 0 ] && pgrep -f "startxfce4" > /dev/null; then
+    echo "🎉 OVERALL STATUS: ✅ FULLY OPERATIONAL"
+    echo ""
+    echo "🚀 Quick Access:"
+    echo "   Web Browser: http://localhost:6093/"
+    echo "   Auto-Connect: http://localhost:6093/vnc.html?host=localhost&port=6093&password=vnc123&autoconnect=true"
+    echo "   VNC Client: localhost:5903 (password: vnc123)"
+else
+    echo "⚠️  OVERALL STATUS: ❌ PARTIALLY RUNNING"
+    echo ""
+    echo "🔧 To start missing services:"
+    echo "   ./start-vnc      # Start VNC desktop"
+    echo "   ./start-web-vnc  # Start web interface"
+fi
+
+echo ""
+echo "📋 Management Commands:"
+echo "   ./start-vnc      # Start VNC server"
+echo "   ./stop-vnc       # Stop VNC server"
+echo "   ./start-web-vnc  # Start web interface"
+echo "   ./stop-web-vnc   # Stop web interface"
+echo "   ./web-status     # This status check"

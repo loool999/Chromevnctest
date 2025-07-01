@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Start VNC server with XFCE desktop
+echo "Starting VNC server..."
+
+# Kill existing session if any
+vncserver -kill :3 2>/dev/null || true
+
+# Start new VNC session
+vncserver :3 -depth 24 -geometry 1920x1080
+
+echo "VNC server started on display :3 (port 5903)"
+echo "Password: vnc123"
+echo ""
+echo "You can connect using:"
+echo "- VNC client: localhost:5903 or hostname:5903"
+echo "- VNC password: vnc123"
